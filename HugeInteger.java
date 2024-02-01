@@ -7,37 +7,72 @@ public class HugeInteger {
         digits = new int[40];
     }
 
+    public HugeInteger(String number) {
+        this();
+        parse(number);
+    }
+
     public void parse(String number) {
-        if (number.length() > 40) {
-            throw new IllegalArgumentException("Input exceeds maximum length of 40 digits.");
-        }
+        int length = number.length();
+        int startIndex = 40 - length;
 
-        for (int i = 0; i < number.length(); i++) {
-            digits[i] = Character.getNumericValue(number.charAt(i));
+        for (int i = 0; i < length; i++) {
+            digits[startIndex + i] = Character.getNumericValue(number.charAt(i));
         }
     }
 
-    @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
+        boolean leadingZero = true;
+
         for (int digit : digits) {
-            result.append(digit);
+            if (digit != 0) {
+                leadingZero = false;
+            }
+
+            if (!leadingZero) {
+                sb.append(digit);
+            }
         }
-        return result.toString();
+
+        return sb.toString();
     }
 
-    public void add(HugeInteger other) {
-        // Implementation for addition
-        // ...
+    public HugeInteger add(HugeInteger other) {
+        HugeInteger result = new HugeInteger();
+        int carry = 0;
+
+        for (int i = 39; i >= 0; i--) {
+            int sum = digits[i] + other.digits[i] + carry;
+            result.digits[i] = sum % 10;
+            carry = sum / 10;
+        }
+
+        return result;
     }
 
-    public void subtract(HugeInteger other) {
-        // Implementation for subtraction
-        // ...
+    public HugeInteger subtract(HugeInteger other) {
+        HugeInteger result = new HugeInteger();
+        int borrow = 0;
+
+        for (int i = 39; i >= 0; i--) {
+            int diff = digits[i] - other.digits[i] - borrow;
+
+            if (diff < 0) {
+                diff += 10;
+                borrow = 1;
+            } else {
+                borrow = 0;
+            }
+
+            result.digits[i] = diff;
+        }
+
+        return result;
     }
 
     public boolean isEqualTo(HugeInteger other) {
-        return Arrays.equals(this.digits, other.digits);
+        return Arrays.equals(digits, other.digits);
     }
 
     public boolean isNotEqualTo(HugeInteger other) {
@@ -45,23 +80,27 @@ public class HugeInteger {
     }
 
     public boolean isGreaterThan(HugeInteger other) {
-        // Implementation for greater than comparison
-        // ...
+        for (int i = 0; i < 40; i++) {
+            if (digits[i] > other.digits[i]) {
+                return true;
+            } else if (digits[i] < other.digits[i]) {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     public boolean isLessThan(HugeInteger other) {
-        // Implementation for less than comparison
-        // ...
+        return !isEqualTo(other) && !isGreaterThan(other);
     }
 
     public boolean isGreaterThanOrEqualTo(HugeInteger other) {
-        // Implementation for greater than or equal to comparison
-        // ...
+        return isEqualTo(other) || isGreaterThan(other);
     }
 
     public boolean isLessThanOrEqualTo(HugeInteger other) {
-        // Implementation for less than or equal to comparison
-        // ...
+        return isEqualTo(other) || isLessThan(other);
     }
 
     public boolean isZero() {
@@ -70,7 +109,21 @@ public class HugeInteger {
                 return false;
             }
         }
+
         return true;
     }
 
-}
+    public HugeInteger multiply(HugeInteger other) {
+        // TODO: Implement multiplication
+        return null;
+    }
+
+    public HugeInteger divide(HugeInteger other) {
+        // TODO: Implement division
+        return null;
+    }
+
+    public HugeInteger remainder(HugeInteger other) {
+        // TODO: Implement remainder
+        return null;
+    }
